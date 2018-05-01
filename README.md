@@ -26,7 +26,7 @@ our book images in a browser then turn them into images and file them away nicel
 The purpose of our fancu book images is to train ml to make them into useful information about real life book shelves. 
 ### Done: 
 ### TODO: 
-- Pick a framework (https://github.com/spearow/juice, https://github.com/alexandermorozov/leaf)?
+- Pick a framework (http://www.arewelearningyet.com/, https://github.com/spearow/juice, https://github.com/alexandermorozov/leaf)?
 - Teach computers how to be people 
 - ...
 - Profit
