@@ -7,6 +7,7 @@ import TypedSvg.Types exposing (..)
 import Json.Decode as Decode
 import Array
 
+
 id =
     attribute "id"
 
@@ -15,6 +16,7 @@ path =
     node "path"
 
 
+wrapper : List (Svg msg) -> Svg msg
 wrapper rest =
     let
         head =
@@ -40,8 +42,9 @@ wrapper rest =
             (head :: rest)
 
 
+aBook : String -> Int -> Svg msg
 aBook title n =
-    g [ id "First", attribute "inkscape:label" "#g5490", transform [ Translate (n * 90) 0 ] ]
+    g [ id "First", attribute "inkscape:label" "#g5490", transform [ Translate (toFloat (n * 90)) 0 ] ]
         --attribute "transform" "translate(90.093195,3.4651225)" ]
         [ path [ d "m -60.782068,8.6901697 44.661584,0 -3.08011,232.9332603 -43.121528,-0.77003 z", id "path2989", attribute "inkscape:connector-curvature" "0", attribute "style" "fill:url(#Gradient);fill-opacity:1;stroke:none" ]
             []
@@ -70,11 +73,19 @@ aBook title n =
             ]
         ]
 
-titleDecode = Decode.array Decode.string
-bookTitles = case (Decode.decodeString titleDecode bookString) of
-                 Ok titles -> titles
-                 _ -> Array.fromList ["I dunno huck finn or something?"]
-             
+
+titleDecode =
+    Decode.array Decode.string
+
+
+bookTitles =
+    case (Decode.decodeString titleDecode bookString) of
+        Ok titles ->
+            titles
+
+        _ ->
+            Array.fromList [ "I dunno huck finn or something?" ]
+
 
 bookString =
     """[
