@@ -1,5 +1,6 @@
 # bookshelves
 
+Thoughts here: https://www.notion.so/bookshelves/Bookshelf-Project-Links-a5420e0fd154410a83a1a02c820e9123
 ## Rendering
 We want to generate lots and lots of images of bookshelves. We'll do this with SVG and Elm.
 ### Done:
