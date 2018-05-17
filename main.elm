@@ -11,6 +11,7 @@ import String exposing (left)
 import TypedSvg exposing (..)
 import TypedSvg.Attributes exposing (..)
 import TypedSvg.Core exposing (Svg)
+import TypedSvg.Events exposing (onClick)
 import TypedSvg.Core exposing (..)
 import TypedSvg.Types exposing (..)
 
@@ -23,7 +24,6 @@ path =
     node "path"
 
 
-wrapper : List (Svg msg) -> Svg msg
 wrapper rest =
     let
         head =
@@ -45,6 +45,7 @@ wrapper rest =
             , attribute "xmlns:inkscape" "http://www.inkscape.org/namespaces/inkscape"
             , attribute "xmlns:sodipodi" "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
             , attribute "xmlns:xlink" "http://www.w3.org/1999/xlink"
+            , onClick ChangeShelf
             ]
             (head :: rest)
 
@@ -226,45 +227,50 @@ bookString =
 
 main : Program Never Bookshelf Msg
 main =
-    program { init = NoShelf ! [ getMeABook ], subscriptions = \x -> Sub.none, update = update, view = renderedShelf }
+    program { init = NoShelf ! [ getMeAShelf ], subscriptions = \x -> Sub.none, update = update, view = renderedShelf }
 
 
 type Bookshelf
     = NoShelf
-    | ShelfWithNBooks Int
-
-
-update : Msg -> Bookshelf -> ( Bookshelf, Cmd msg )
-update msg shelf =
-    case (msg) of
-        RandomBookShelf b ->
-            b ! []
+    | ShelfWithSevenRandomBooks (List Int)
 
 
 type Msg
     = RandomBookShelf Bookshelf
+    | ChangeShelf
 
 
-getMeABook : Cmd Msg
-getMeABook =
-    Random.generate RandomBookShelf (Random.map ShelfWithNBooks (Random.int 0 121))
+update : Msg -> Bookshelf -> ( Bookshelf, Cmd Msg )
+update msg shelf =
+    case (msg) of
+        ChangeShelf ->
+            shelf ! [ getMeAShelf ]
+
+        RandomBookShelf b ->
+            b ! []
 
 
-renderedShelf : Bookshelf -> Svg msg
+getMeAShelf : Cmd Msg
+getMeAShelf =
+    let
+        randomBook =
+            Random.int 0 121
+    in
+        Random.generate RandomBookShelf (Random.map ShelfWithSevenRandomBooks (Random.list 7 randomBook))
+
+
+renderedShelf : Bookshelf -> Html.Html Msg
 renderedShelf shelf =
-    case shelf of
-        NoShelf ->
-            text_ [] []
+    let
+        nthBook n =
+            aBook (left 15 (withDefault "BadArray" (Array.get n bookTitles)))
+    in
+        case shelf of
+            NoShelf ->
+                text_ [] []
 
-        ShelfWithNBooks i ->
-            wrapper (nBooks i)
-
-
-nthBook : Int -> Svg msg
-nthBook n =
-    aBook (left 15 (withDefault "BadArray" (Array.get n bookTitles))) n
-
-
-nBooks : Int -> List (Svg msg)
-nBooks n =
-    List.map nthBook (range 0 n)
+            ShelfWithSevenRandomBooks books ->
+                List.length books
+                    |> range 1
+                    |> List.map2 nthBook books
+                    |> wrapper
