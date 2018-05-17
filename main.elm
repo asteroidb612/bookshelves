@@ -227,7 +227,12 @@ bookString =
 
 main : Program Never Bookshelf Msg
 main =
-    program { init = NoShelf ! [ getMeAShelf ], subscriptions = \x -> Sub.none, update = update, view = renderedShelf }
+    program
+        { init = NoShelf ! [ getMeAShelf ]
+        , update = update
+        , view = renderedShelf
+        , subscriptions = \x -> Sub.none
+        }
 
 
 type Bookshelf
